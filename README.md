@@ -1,6 +1,6 @@
 # AFreminders
 
-AFreminders is a tool for setting up recurring reminders that can be accessed via a single RSS feed. It works great with services that allow RSS feeds as triggers to execute actions.
+AFreminders is a tool for setting up recurring reminders that can be accessed via a single RSS feed. It works great with services that allow RSS feeds as triggers to execute actions like [n8n](https://github.com/n8n-io/n8n), [IFTTT](https://ifttt.com/) and [Zapier](https://zapier.com/).
 
 ## Possible use Cases
 
@@ -12,6 +12,7 @@ AFreminders is a tool for setting up recurring reminders that can be accessed vi
 
 ## Features
 
+* Self host-able
 * Available in German (default language) and English
 * Manage reminders via responsive backend interface
 * Start/restart/stop reminders via GET parameters
