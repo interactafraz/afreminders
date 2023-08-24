@@ -33,18 +33,27 @@ if(isset($_GET['start']) || isset($_GET['restart'])) {
 	if(file_exists($PathReminderTimestamp)) {
 		unlink($PathReminderTimestamp); // Delete Timestamp File
 	}
-	$TimestampFile = fopen($PathReminderTimestamp, "w"); //Create and open Timestamp File
-	fwrite($TimestampFile, $DateCurrent); //Insert Current Date
-	fclose($TimestampFile); //Close Timestamp File	
 	
+	$TimestampFile = fopen($PathReminderTimestamp, 'w+'); // // Create (or clear existing) Timestamp file
+	flock($TimestampFile, LOCK_EX); //Lock file to avoid other processes writing to it simlutanously
+
+	fwrite($TimestampFile, $DateCurrent); //Insert Current Date
+
+	flock($TimestampFile, LOCK_UN); //Unlock file for further access
+	fclose($TimestampFile); //Close Timestamp File
 	
 	if(file_exists($PathReminderGuid)) {
 		unlink($PathReminderGuid); // Delete Guid File
 	}
 	$guid = rand(); //Generate Random Number
-	$GuidFile = fopen($PathReminderGuid, "w"); //Create and open Guid File
+
+	$GuidFile = fopen($PathReminderGuid, 'w+'); // // Create (or clear existing) Guid file
+	flock($GuidFile, LOCK_EX); //Lock file to avoid other processes writing to it simlutanously
+
 	fwrite($GuidFile, $guid); //Insert Guid
-	fclose($GuidFile); //Close Guid File
+
+	flock($GuidFile, LOCK_UN); //Unlock file for further access
+	fclose($GuidFile); //Close Guid File	
 	
 	header("Location: dashboard.php?status=success-" . $StatusType . "&" . "id=" . $ReminderID);
 	die();

@@ -56,8 +56,12 @@ elseif(isset($_GET['delete'])) {
 	$reminders = array_filter($reminders); //Remove nulled arrays
 	$reminders = array_values($reminders);//Reset array index
 	
-	$fp = fopen($reminderFile, 'w');
-	fwrite($fp, json_encode($reminders));
+	$fp = fopen($reminderFile, 'w+'); // Create (or clear existing) file
+	flock($fp, LOCK_EX); //Lock file to avoid other processes writing to it simlutanously
+
+	fwrite($fp, json_encode($reminders)); //Save new data to file
+
+	flock($fp, LOCK_UN); //Unlock file for further access
 	fclose($fp);
 
 	$StatusMessage = $language['statusMessageDeleted'];

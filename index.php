@@ -7,8 +7,14 @@ header('Content-type: application/xml');
 $DateCurrent = date('D, d M Y H:i:s', time());
 $DateReference = "";
 
-$json = file_get_contents($reminderFile);
+$fp = fopen($reminderFile, 'r'); // Open file in read-only mode
+flock($fp, LOCK_EX); //Lock file to avoid other processes writing to it simlutanously
+
+$json = stream_get_contents($fp);
 $reminders = json_decode($json, true);
+
+flock($fp, LOCK_UN); //Unlock file for further access
+fclose($fp);
 
 $output = "";
 
@@ -55,15 +61,25 @@ for ($row = 0; $row < count($reminders); $row++) {
 		
 		if ($DateDifferenceDays >= $ReminderInterval) { //Check if interval exceeded -> Set new reminder
 			unlink($PathReminderTimestamp); // Delete Timestamp File
-			$TimestampFile = fopen($PathReminderTimestamp, "w"); //Create and open Timestamp File
+			
+			$TimestampFile = fopen($PathReminderTimestamp, 'w+'); // // Create (or clear existing) Timestamp file
+			flock($TimestampFile, LOCK_EX); //Lock file to avoid other processes writing to it simlutanously
+
 			fwrite($TimestampFile, $DateCurrent); //Insert Current Date
+
+			flock($TimestampFile, LOCK_UN); //Unlock file for further access
 			fclose($TimestampFile); //Close Timestamp File
 			
 			unlink($PathReminderGuid); // Delete Guid File
 			$guid = rand(); //Generate Random Number
-			$GuidFile = fopen($PathReminderGuid, "w"); //Create and open Guid File
+			
+			$GuidFile = fopen($PathReminderGuid, 'w+'); // // Create (or clear existing) Guid file
+			flock($GuidFile, LOCK_EX); //Lock file to avoid other processes writing to it simlutanously
+
 			fwrite($GuidFile, $guid); //Insert Guid
-			fclose($GuidFile); //Close Guid File
+
+			flock($GuidFile, LOCK_UN); //Unlock file for further access
+			fclose($GuidFile); //Close Guid File			
 			
 			$ContentItemText .= "<item>\n";
 			$ContentItemText .= "<title>" . "<![CDATA[" .$ReminderTitle. "]]>" . "</title>\n";

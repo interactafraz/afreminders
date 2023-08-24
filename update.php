@@ -26,8 +26,14 @@ else{
 		
 		$entry = [$ReminderID,$ReminderTitle,$ReminderInterval,$ReminderGroup,$ReminderShiftableBool];
 
-		$json = file_get_contents($reminderFile);
-		$reminders = json_decode($json);
+		$fp = fopen($reminderFile, 'r'); // Open file in read-only mode
+		flock($fp, LOCK_EX); //Lock file to avoid other processes writing to it simlutanously
+
+		$json = stream_get_contents($fp);
+		$reminders = json_decode($json, true);
+
+		flock($fp, LOCK_UN); //Unlock file for further access
+		fclose($fp);
 		
 		foreach($reminders as &$reminder) {
 			if($reminder[0] == $ReminderID) {
@@ -38,10 +44,14 @@ else{
 		
 		if($IDexists == false){ //ID does not already exist
 			array_push($reminders, $entry);
+			
+			$fp = fopen($reminderFile, 'w+'); // Create (or clear existing) file
+			flock($fp, LOCK_EX); //Lock file to avoid other processes writing to it simlutanously
 
-			$fp = fopen($reminderFile, 'w');
-			fwrite($fp, json_encode($reminders));
-			fclose($fp);
+			fwrite($fp, json_encode($reminders)); //Save new data to file
+
+			flock($fp, LOCK_UN); //Unlock file for further access
+			fclose($fp);			
 			
 			$headercontent = "location:edit.php?status=success";
 			header($headercontent);
