@@ -2,6 +2,7 @@
 
 include("inc/globals.php");
 
+header('Access-Control-Allow-Origin: *'); 
 header('Content-type: application/xml');
 
 $DateCurrent = date('D, d M Y H:i:s', time());
