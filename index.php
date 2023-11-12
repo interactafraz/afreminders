@@ -24,7 +24,14 @@ $ContentItemText = "";
 $ContentItemsUnsorted = array();
 $ContentItemsSorted = array();
 
-$URLmain = "https://". $_SERVER['SERVER_NAME'] . dirname($_SERVER['REQUEST_URI']) ."/"; //Add base url here
+$URLmain = "";
+
+if( !str_contains($_SERVER['REQUEST_URI'], 'index.php') ){ //If script was called without "index.php" in URL
+	$URLmain = "https://". $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
+}
+else{
+	$URLmain = "https://". $_SERVER['SERVER_NAME'] . dirname($_SERVER['REQUEST_URI']) ."/";
+}
 
 if(!is_dir($DirTimestamps)){
     //Directory does not exist, so lets create it.
