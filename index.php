@@ -50,6 +50,7 @@ for ($row = 0; $row < count($reminders); $row++) {
 	$ReminderID = $reminders[$row][0];
 	$PathReminderTimestamp = "./" . $DirTimestamps . "/" . $ReminderID . ".txt";
 	$PathReminderGuid = "./" . $DirTimestamps . "/" . $ReminderID . "_guid.txt";
+	$PathReminderAttributes = "./" . $DirTimestamps . "/" . $ReminderID . "_attributes.txt";
 	
 	$ReminderTitle = $reminders[$row][1];
 	$ReminderInterval = $reminders[$row][2];
@@ -88,6 +89,19 @@ for ($row = 0; $row < count($reminders); $row++) {
 
 			flock($GuidFile, LOCK_UN); //Unlock file for further access
 			fclose($GuidFile); //Close Guid File			
+			
+			if(file_exists($PathReminderAttributes)) {
+				unlink($PathReminderAttributes); // Delete Attribute File
+			}
+			$attributes = $AttributesDefault;
+
+			$AttributeFile = fopen($PathReminderAttributes, 'w+'); // // Create (or clear existing) Attribute file
+			flock($AttributeFile, LOCK_EX); //Lock file to avoid other processes writing to it simlutanously
+
+			fwrite($AttributeFile, $attributes); //Insert Attribute
+
+			flock($AttributeFile, LOCK_UN); //Unlock file for further access
+			fclose($AttributeFile); //Close Attribute File	
 			
 			$ContentItemText .= "<item>\n";
 			$ContentItemText .= "<title>" . "<![CDATA[" .$ReminderTitle. "]]>" . "</title>\n";

@@ -18,6 +18,7 @@ AFreminders is a tool for setting up recurring reminders that can be accessed vi
 * Start/restart/stop reminders via GET parameters
 * Add reminders to groups for better organization
 * Mark reminders to automatically shift to the next day when missed
+* Add attributes to reminders
 * Saves data to JSON file
 
 ## Prerequisites
@@ -31,7 +32,7 @@ AFreminders is a tool for setting up recurring reminders that can be accessed vi
 
 ## Usage
 
-Access the script via `index.php` to get the RSS feed. To add, remove, start, restart or stop reminders, use the dashboard.
+Access the script via `index.php` to get the RSS feed. To add, remove, start, restart or stop reminders, use the dashboard. Overdue reminders get restarted automatically when the feed is accessed and will be displayed immediately afterwards.
 
 ### Dashboard (dashboard.php)
 
@@ -58,7 +59,7 @@ To add/remove reminders, use the `Edit list` button, which opens a form with the
 * *7* would make a reminder appear every week on the same weekday (perfect for *Thirsty Thursday*)
 * *1* would make a reminder appear daily
 
-**Group**: An advanced feature for users with many reminders. Use it to handle reminders with different priorities efficiently. Two groups are available.
+**Group**: An advanced feature for users with many reminders. Use it to handle reminders with different priorities efficiently.
 
 * All: For reminders with both low and high priority.
 * Essential: For reminders with high priority at home, such as trash routines.
@@ -68,12 +69,22 @@ Groups can be useful for the control system that gets triggered by the RSS feed.
 
 > Note: Group values do not affect the visibility of RSS feed items.
 
-**Shiftable attribute**: An advanced feature for users who need missed reminders to automatically shift to the next day. Use it to tell your control system that a reminder should be restarted the next day (via GET parameters) when your control mechanisms register that you missed it. Two settings are available.
+**Shiftable tag**: An advanced feature for users who need missed reminders to automatically shift to the next day. Use it to tell your control system that a reminder should be restarted the next day (via GET parameters) when your control functions register that you missed it. Two settings are available.
 
 * *Yes* would tell your control system `Reset the interval counter and set the next day as the first day of a new interval.`
 * *No* would tell your control system `If I forget this, keep reminding me without interrupting the current interval.`. This setting is great for *Taco Tuesdays*!
 
 > Note: This value only affects the JSON file. To take advantage of this feature, you need to implement custom conditions in your control system. Otherwise this setting won't change anything.
+
+---
+
+**Attributes**: A hidden feature that can be used to add custom data to reminders. Possible use cases include attaching a status/label to specific reminders or mark certain ones as *processed*. 
+
+To set an attribute, use `dashboard.php?id=reminder-id&attribute=attribute-data`. If an attribute was already set before it will be overwritten.
+
+The data will be saved to the `timestamps` folder in a `reminder-id_attributes.txt` file.
+
+> Note: Attributes get reset when a reminder is started, restarted or stopped.
 
 ## Roadmap
 

@@ -30,6 +30,7 @@ $language['tableNonShiftable'] = 'nicht automatisch verschiebbar';
 $language['statusMessageStarted'] = 'gestartet';
 $language['statusMessageRestarted'] = 'neu gestartet';
 $language['statusMessageStopped'] = 'gestoppt';
+$language['statusMessageAttributeAdded'] = 'aktualisiert';
 /* VARS DASHBOARD END */
 
 /* VARS EDIT START */
