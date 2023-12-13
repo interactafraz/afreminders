@@ -40,34 +40,38 @@ elseif(isset($_GET['delete'])) {
 	$PathReminderTimestamp = "./" . $DirTimestamps . "/" . $ReminderID . ".txt";
 	$PathReminderGuid = "./" . $DirTimestamps . "/" . $ReminderID . "_guid.txt";
 	
-	if(file_exists($PathReminderTimestamp)) {
-		unlink($PathReminderTimestamp); // Delete Timestamp File
-	}
-	
-	if(file_exists($PathReminderGuid)) {
-		unlink($PathReminderGuid); // Delete Guid File
-	}
-	
-	foreach($reminders as &$reminder) {
-		if($reminder[0] == $ReminderID) {
-			$reminder = null;
-			break; //if there will be only one then break out of loop
+	if(!file_exists($PathReminderTimestamp) && !file_exists($PathReminderGuid)) { //If not active
+		if(file_exists($PathReminderTimestamp)) {
+			unlink($PathReminderTimestamp); // Delete Timestamp File
 		}
+		
+		if(file_exists($PathReminderGuid)) {
+			unlink($PathReminderGuid); // Delete Guid File
+		}
+		
+		foreach($reminders as &$reminder) {
+			if($reminder[0] == $ReminderID) {
+				$reminder = null;
+				break; //if there will be only one then break out of loop
+			}
+		}
+		
+		$reminders = array_filter($reminders); //Remove nulled arrays
+		$reminders = array_values($reminders);//Reset array index
+		
+		$fp = fopen($reminderFile, 'w+'); // Create (or clear existing) file
+		flock($fp, LOCK_EX); //Lock file to avoid other processes writing to it simlutanously
+
+		fwrite($fp, json_encode($reminders)); //Save new data to file
+
+		flock($fp, LOCK_UN); //Unlock file for further access
+		fclose($fp);
+
+		$StatusMessage = $language['statusMessageDeleted'];
+		$outputTop .= "<div class=\"message_status\">" . $StatusMessage . "</div>";
 	}
 	
-	$reminders = array_filter($reminders); //Remove nulled arrays
-	$reminders = array_values($reminders);//Reset array index
 	
-	$fp = fopen($reminderFile, 'w+'); // Create (or clear existing) file
-	flock($fp, LOCK_EX); //Lock file to avoid other processes writing to it simlutanously
-
-	fwrite($fp, json_encode($reminders)); //Save new data to file
-
-	flock($fp, LOCK_UN); //Unlock file for further access
-	fclose($fp);
-
-	$StatusMessage = $language['statusMessageDeleted'];
-	$outputTop .= "<div class=\"message_status\">" . $StatusMessage . "</div>";
 }
 
 $output .= "<table class=\"edit\" id=\"sortTable\">";
