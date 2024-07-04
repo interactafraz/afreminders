@@ -112,6 +112,59 @@ elseif( isset($_GET['attribute']) && isset($_GET['id']) ) { //Change attributes 
 	header("Location: dashboard.php?status=success-" . $StatusType . "&" . "id=" . $ReminderID);
 	die();
 }
+elseif( isset($_GET['data']) && $_GET['data'] == "all" ) { //Get data as combined json
+	$dataArray = array();
+
+	$fp = fopen($reminderFile, 'r'); // Open file in read-only mode
+	flock($fp, LOCK_EX); //Lock file to avoid other processes writing to it simlutanously
+
+	$json = stream_get_contents($fp);
+	$reminders = json_decode($json, true);
+
+	flock($fp, LOCK_UN); //Unlock file for further access
+	fclose($fp);
+	
+	for ($row = 0; $row < count($reminders); $row++) {
+		$ReminderData = array();
+		
+		$ReminderID = $reminders[$row][0];
+		$ReminderTitle = $reminders[$row][1];
+		$ReminderInterval = $reminders[$row][2];
+		$ReminderGroup = $reminders[$row][3];
+		$ReminderShiftable = $reminders[$row][4];
+		
+		$timestamp = "";
+		$guid = "";
+		$attributes = "";
+
+		$PathReminderTimestamp = "./" . $DirTimestamps . "/" . $ReminderID . ".txt";
+		$PathReminderGuid = "./" . $DirTimestamps . "/" . $ReminderID . "_guid.txt";
+		$PathReminderAttributes = "./" . $DirTimestamps . "/" . $ReminderID . "_attributes.txt";
+		
+		if (file_exists($PathReminderTimestamp) && file_exists($PathReminderGuid)) { //Check if Timestamp File exists
+			$timestamp = file_get_contents($PathReminderTimestamp);
+			$guid = file_get_contents($PathReminderGuid);
+			$attributes = file_get_contents($PathReminderAttributes);
+		}
+		
+		$ReminderData['ReminderID'] = $ReminderID;
+		$ReminderData['ReminderTitle'] = $ReminderTitle;
+		$ReminderData['ReminderInterval'] = $ReminderInterval;
+		$ReminderData['ReminderGroup'] = $ReminderGroup;
+		$ReminderData['ReminderShiftable'] = $ReminderShiftable;
+		
+		$ReminderData['timestamp'] = $timestamp;
+		$ReminderData['guid'] = $guid;
+		$ReminderData['attributes'] = $attributes;
+		
+		array_push($dataArray, $ReminderData);
+
+	}
+	
+	header('Content-Type: application/json; charset=utf-8');
+	echo json_encode( $dataArray );
+	exit;
+}
 
 $output = "";
 

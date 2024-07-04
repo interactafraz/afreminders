@@ -1,6 +1,6 @@
 # AFreminders
 
-AFreminders is a tool for setting up recurring reminders that can be accessed via a single RSS feed. It works great with services that allow RSS feeds as triggers to execute actions like [n8n](https://github.com/n8n-io/n8n), [IFTTT](https://ifttt.com/) and [Zapier](https://zapier.com/).
+AFreminders is a tool for quickly setting up recurring reminders that can be accessed via a single RSS feed or JSON. It works great with services that allow RSS feeds as triggers to execute actions like [n8n](https://github.com/n8n-io/n8n), [IFTTT](https://ifttt.com/) and [Zapier](https://zapier.com/).
 
 ## Possible use cases
 
@@ -36,7 +36,9 @@ Access the script via `index.php` to get the RSS feed. To add, remove, start, re
 
 ### Dashboard (dashboard.php)
 
-The dashboard lists all existing reminders and allows you to start, restart or stop them. Stopped reminders do not appear in the RSS feed. To manage reminders via GET parameters, use `dashboard.php?start=reminder-id`, `dashboard.php?restart=reminder-id` or `dashboard.php?stop=reminder-id`.
+The dashboard lists all existing reminders and allows you to start, restart or stop them. Stopped reminders do not appear in the RSS feed. To control reminders via GET parameters, use `dashboard.php?start=reminder-id`, `dashboard.php?restart=reminder-id` or `dashboard.php?stop=reminder-id`.
+
+To get all reminder data as JSON, use `dashboard.php?data=all`.
 
 ---
 
@@ -85,15 +87,6 @@ To set an attribute, use `dashboard.php?id=reminder-id&attribute=attribute-data`
 The data will be saved to the `timestamps` folder in a `reminder-id_attributes.txt` file.
 
 > Note: Attributes get reset when a reminder is started, restarted or stopped.
-
-## Roadmap
-
-- [ ] UI improvement: Redesign overall look and feel
-- [ ] UI improvement: Add interval picker with days/weeks/months option to edit form
-- [ ] UI improvement: Validate ID syntax while typing into edit form
-- [ ] Expose group for each item in RSS feed
-- [ ] Allow users to add custom groups
-- [ ] Allow users to hide advanced features if not required to declutter UI
 
 ## Notes
 
