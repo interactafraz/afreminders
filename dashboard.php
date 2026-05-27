@@ -112,6 +112,60 @@ elseif( isset($_GET['attribute']) && isset($_GET['id']) ) { //Change attributes 
 	header("Location: dashboard.php?status=success-" . $StatusType . "&" . "id=" . $ReminderID);
 	die();
 }
+elseif( isset($_GET['tagadd']) && isset($_GET['id']) ) { //Add tag to reminder
+	$StatusType = "tagadd";
+	$ReminderID = $_GET['id'];
+	$tag = $_GET['tagadd'];
+	$PathReminderTags = "./" . $DirTimestamps . "/" . $ReminderID . "_tags.txt";
+	
+	$existingTags = "";
+	if(file_exists($PathReminderTags)) {
+		$existingTags = file_get_contents($PathReminderTags);
+	}
+	
+	$tagsArray = array_filter(array_map('trim', explode("\n", $existingTags)));
+	
+	if(!in_array($tag, $tagsArray)) {
+		$tagsArray[] = $tag;
+	}
+	
+	$tagsContent = implode("\n", $tagsArray);
+	
+	$TagFile = fopen($PathReminderTags, 'w+');
+	flock($TagFile, LOCK_EX);
+	fwrite($TagFile, $tagsContent);
+	flock($TagFile, LOCK_UN);
+	fclose($TagFile);
+	
+	header("Location: dashboard.php?status=success-" . $StatusType . "&" . "id=" . $ReminderID);
+	die();
+}
+elseif( isset($_GET['tagremove']) && isset($_GET['id']) ) { //Remove tag from reminder
+	$StatusType = "tagremove";
+	$ReminderID = $_GET['id'];
+	$tag = $_GET['tagremove'];
+	$PathReminderTags = "./" . $DirTimestamps . "/" . $ReminderID . "_tags.txt";
+	
+	if(file_exists($PathReminderTags)) {
+		$existingTags = file_get_contents($PathReminderTags);
+		$tagsArray = array_filter(array_map('trim', explode("\n", $existingTags)));
+		
+		$tagsArray = array_values(array_filter($tagsArray, function($t) use ($tag) {
+			return $t !== $tag;
+		}));
+		
+		$tagsContent = implode("\n", $tagsArray);
+		
+		$TagFile = fopen($PathReminderTags, 'w+');
+		flock($TagFile, LOCK_EX);
+		fwrite($TagFile, $tagsContent);
+		flock($TagFile, LOCK_UN);
+		fclose($TagFile);
+	}
+	
+	header("Location: dashboard.php?status=success-" . $StatusType . "&" . "id=" . $ReminderID);
+	die();
+}
 elseif( isset($_GET['data']) && $_GET['data'] == "all" ) { //Get data as combined json
 	$dataArray = array();
 
@@ -136,10 +190,16 @@ elseif( isset($_GET['data']) && $_GET['data'] == "all" ) { //Get data as combine
 		$timestamp = "";
 		$guid = "";
 		$attributes = "";
+		$tags = array();
 
 		$PathReminderTimestamp = "./" . $DirTimestamps . "/" . $ReminderID . ".txt";
 		$PathReminderGuid = "./" . $DirTimestamps . "/" . $ReminderID . "_guid.txt";
 		$PathReminderAttributes = "./" . $DirTimestamps . "/" . $ReminderID . "_attributes.txt";
+		$PathReminderTags = "./" . $DirTimestamps . "/" . $ReminderID . "_tags.txt";
+		
+		if(file_exists($PathReminderTags)) {
+			$tags = array_filter(array_map('trim', explode("\n", file_get_contents($PathReminderTags))));
+		}
 		
 		if (file_exists($PathReminderTimestamp) && file_exists($PathReminderGuid)) { //Check if Timestamp File exists
 			$timestamp = file_get_contents($PathReminderTimestamp);
@@ -156,6 +216,7 @@ elseif( isset($_GET['data']) && $_GET['data'] == "all" ) { //Get data as combine
 		$ReminderData['timestamp'] = $timestamp;
 		$ReminderData['guid'] = $guid;
 		$ReminderData['attributes'] = $attributes;
+		$ReminderData['tags'] = $tags;
 		
 		array_push($dataArray, $ReminderData);
 
@@ -191,6 +252,12 @@ if(isset($_GET['status']) && isset($_GET['id'])) {
 	elseif ($_GET['status'] == "success-attribute"){
 		$StatusMessage = "<strong>" . $ReminderTitle . "</strong>" . " " .$language['statusMessageAttributeAdded'].".";
 	}
+	elseif ($_GET['status'] == "success-tagadd"){
+		$StatusMessage = "<strong>" . $ReminderTitle . "</strong>" . " " .$language['statusMessageTagAdded'].".";
+	}
+	elseif ($_GET['status'] == "success-tagremove"){
+		$StatusMessage = "<strong>" . $ReminderTitle . "</strong>" . " " .$language['statusMessageTagRemoved'].".";
+	}
 	
 	$output .= "<div class=\"message_status\">" . $StatusMessage . "</div>";
 }
@@ -199,6 +266,7 @@ $output .= "<table id=\"sortTable\">";
 
 $output .= "<tr>";
 $output .= "<th>".$language['tableTitle']."<br><i>ID (".$language['tableGroup'].")</i></th>";
+$output .= "<th>Tags</th>";
 $output .= "<th>Update<br><i>".$language['tableUpdateLast']."</i></th>";
 $output .= "<th> </th>"; //Interval
 $output .= "<th>Update<br><i>".$language['tableUpdateNext']."</i></th>";
@@ -221,6 +289,20 @@ for ($row = 0; $row < count($reminders); $row++) {
 	$output .= "<tr>";
 
 	$output .= "<td>" .$ReminderTitle. "<br><i>".$ReminderID." (".$ReminderGroup.")</i></td>"; //Titel
+	
+	$PathReminderTags = "./" . $DirTimestamps . "/" . $ReminderID . "_tags.txt";
+	$tagsContent = "";
+	if(file_exists($PathReminderTags)) {
+		$tagsContent = file_get_contents($PathReminderTags);
+	}
+	$tagsArray = array_filter(array_map('trim', explode("\n", $tagsContent)));
+	
+	$output .= "<td><div class=\"tags_container\">";
+	foreach($tagsArray as $tag) {
+		$output .= "<span class=\"tag\">".$tag."<a class=\"tag_remove\" href=\"dashboard.php?id=".$ReminderID."&tagremove=".urlencode($tag)."\">&times;</a></span>";
+	}
+	$output .= "<form method=\"GET\" style=\"display:inline-flex;align-items:center;gap:2px;\" class=\"tag_add_form\"><input type=\"hidden\" name=\"id\" value=\"".$ReminderID."\"><input type=\"text\" name=\"tagadd\" placeholder=\"Tag\"><input type=\"submit\" value=\"+\" class=\"tag_add_btn\"></form>";
+	$output .= "</div></td>";
 	
 	if (file_exists($PathReminderTimestamp) && file_exists($PathReminderGuid)) { //Check if Timestamp File exists
 		$DateReference = file_get_contents($PathReminderTimestamp); //Get Date from Timestamp File

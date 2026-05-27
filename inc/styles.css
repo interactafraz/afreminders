@@ -1,8 +1,3 @@
-/* http://meyerweb.com/eric/tools/css/reset/ 
-   v2.0 | 20110126
-   License: none (public domain)
-*/
-
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -197,7 +192,16 @@ input:focus{outline: none;}
 .footer_button {width: 100%;/* height: 4em; */display: block;background: #343434 !important;background-size: auto 30%;background-repeat: no-repeat;background-position: center;margin: 0;border-radius: 0;}
 .footer_button {position: fixed;bottom: 0;left: 0;}
 
-td:nth-child(3) span {font-size: 0.85em;font-style: italic;}
+td:nth-child(4) span {font-size: 0.85em;font-style: italic;}
+
+.tags_container {display: flex;flex-wrap: wrap;align-items: center;gap: 4px;}
+.tag {display: inline-flex;align-items: center;background: #343434;color: white;padding: 2px 6px;font-size: 0.8em;border-radius: 3px;}
+.tag_remove {display: inline-flex;align-items: center;justify-content: center;color: white;text-decoration: none;font-size: 1em;cursor: pointer;padding: 0 3px;margin: 0 0 0 4px;}
+.tag_remove:hover {color: #ffc800;background: transparent;}
+.tag_add_form {display: inline-flex;align-items: center;gap: 2px;white-space: nowrap;flex-shrink: 0;}
+.tag_add_form input[type="text"] {width: 60px;min-width: 60px;padding: 2px 4px;font-size: 0.8em;background: transparent;border: 1px solid #aaaaaa;color: inherit;border-radius: 3px;}
+.tag_add_btn {background: #ffc800;border: 1px solid #ffc800;color: white;padding: 2px 6px;cursor: pointer;font-size: 0.8em;border-radius: 3px;margin-left: 4px;white-space: nowrap;flex-shrink: 0;}
+.tag_add_btn:hover{color:black;}
 
 @media only screen and (max-width: 767px) {
 
@@ -227,23 +231,30 @@ td:nth-child(3) span {font-size: 0.85em;font-style: italic;}
 		padding-bottom: 15px;
 		text-align: center;
 	}
-	td:nth-child(2),td:nth-child(3),td:nth-child(4) {
+	td:nth-child(2) {
+		width:100%;
+		padding-top: 15px;
+		padding-bottom: 15px;
+		text-align: center;
+	}
+	td:nth-child(3),td:nth-child(4),td:nth-child(5) {
 		font-size: 0.85em;
 	}
-	td:nth-child(5) {
+	td:nth-child(6) {
 	}
-	th:nth-child(2),td:nth-child(2){white-space: nowrap;}
-	th:nth-child(3),td:nth-child(3){text-align:center;}
-	th:nth-child(4),td:nth-child(4){white-space: nowrap;}
+	th:nth-child(3),td:nth-child(3){white-space: nowrap;}
+	th:nth-child(4),td:nth-child(4){text-align:center;}
 	th:nth-child(5),td:nth-child(5){white-space: nowrap;}
-	td:nth-child(5){text-align:center;width: 100%;padding-top: 30px;padding-bottom: 30px;}
-	td:nth-child(5) a{display:inline-block;}
-	td:nth-child(5) a.start{background:#146400;border: 1px solid #146400;}
-	td:nth-child(5) a.restart{margin-right:0!important;}
+	th:nth-child(6),td:nth-child(6){white-space: nowrap;}
+	td:nth-child(6){text-align:center;width: 100%;padding-top: 30px;padding-bottom: 30px;}
+	td:nth-child(6) a{display:inline-block;}
+	td:nth-child(6) a.start{background:#146400;border: 1px solid #146400;}
+	td:nth-child(6) a.restart{margin-right:0!important;}
+	.tags_container{justify-content:center;}
 	td a.stop{background:#660000;border: 1px solid #660000;}
 	.edit td{width:100%;text-align:center;}
 	.edit td .stop{/* margin-top: 1em; *//* margin-bottom: 15px; */}
-	.edit th:nth-child(4), .edit td:nth-child(4){font-style:italic;padding-top: 15px;padding-bottom: 15px;}
+	.edit th:nth-child(5), .edit td:nth-child(5){font-style:italic;padding-top: 15px;padding-bottom: 15px;}
 
 	tr:nth-child(even){background: #efefef;}
 	tr:nth-child(odd){background: #e5e5e5;}
@@ -281,21 +292,21 @@ td:nth-child(3) span {font-size: 0.85em;font-style: italic;}
 
 	tr{}
 	td:nth-child(1) {}
-	th:nth-child(2),td:nth-child(2){width: 1px;white-space: nowrap;padding-right:0 !important;}
-	th:nth-child(3),td:nth-child(3){text-align:center;padding-left:0 !important;padding-right:0 !important;}
-	th:nth-child(4),td:nth-child(4){width: 1px;white-space: nowrap;padding-left:0 !important;}
-	th:nth-child(5),td:nth-child(5){width:1px;white-space: nowrap;padding: 0 !important;}
-	td:nth-child(5){text-align:right;}
-	td:nth-child(5) a{display:inline-block;}
-	td:nth-child(5) a.start{background:#146400;}
-	td:nth-child(5) a.restart{margin-right:0!important;}
+	th:nth-child(3), td:nth-child(3){width: 1px;white-space: nowrap;padding-right:0 !important;}
+	th:nth-child(4),td:nth-child(4){text-align:center;padding-left:0 !important;padding-right:0 !important;}
+	th:nth-child(5),td:nth-child(5){width: 1px;white-space: nowrap;padding-left:0 !important;}
+	th:nth-child(6),td:nth-child(6){width:1px;white-space: nowrap;padding: 0 !important;}
+	td:nth-child(6){text-align:right;}
+	td:nth-child(6) a{display:inline-block;}
+	td:nth-child(6) a.start{background:#146400;}
+	td:nth-child(6) a.restart{margin-right:0!important;}
 	td a.stop{background:#660000;}
 
 	tr:nth-child(even){background: rgba(255, 255, 255, 0.05);}
 	tr:nth-child(odd){background: rgba(150, 150, 150, 0.10);}
-	th, td:nth-child(-n+6){padding: 1em;}
+	th, td:nth-child(-n+7){padding: 1em;}
 	.edit td{vertical-align:middle;}
-	.edit th:nth-child(4), .edit td:nth-child(4){padding:1em !important;text-align:center;font-style: italic;}
+	.edit th:nth-child(5), .edit td:nth-child(5){padding:1em !important;text-align:center;font-style: italic;}
 	th {text-align:left;/* text-transform:uppercase; */cursor:default;background: #343434;color:white;position: -webkit-sticky; /* Safari */position: sticky;top: 0;}
 	tr:not(:first-child):hover {color: black;background-color:#ffffff;}
 	td{text-align:left;font-size: 1em;vertical-align: top;height: 2em;}

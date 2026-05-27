@@ -18,7 +18,8 @@ AFreminders is a tool for quickly setting up recurring reminders that can be acc
 * Start/restart/stop reminders via GET parameters
 * Add reminders to groups for better organization
 * Mark reminders to automatically shift to the next day when missed
-* Add attributes to reminders
+* Add tags to reminders
+* Add dynamic attributes to reminders
 * Saves data to JSON file
 
 ## Prerequisites
@@ -80,7 +81,15 @@ Groups can be useful for the control system that gets triggered by the RSS feed.
 
 ---
 
-**Attributes**: A hidden feature that can be used to add custom data to reminders. Possible use cases include attaching a status/label to specific reminders or mark certain ones as *processed*. 
+**Tags**: Can be used to add keywords to reminders for better filtering in other systems.
+
+To add a tag, use `dashboard.php?id=reminder-id&tagadd=tag-name`. To remove a tag, use `dashboard.php?id=reminder-id&tagremove=tag-name`.
+
+The data will be saved to the `timestamps` folder in a `reminder-id_tags.txt` file.
+
+---
+
+**Attributes**: A headless feature that can be used to add dynamic custom data to reminders. Possible use cases include attaching a status to specific reminders or mark some as *processed*. 
 
 To set an attribute, use `dashboard.php?id=reminder-id&attribute=attribute-data`. If an attribute was already set before it will be overwritten.
 
@@ -90,7 +99,7 @@ The data will be saved to the `timestamps` folder in a `reminder-id_attributes.t
 
 ## Notes
 
-* If you plan to handle sensitive data with this tool on a publicly accessible server, consider hardening your system using at least htaccess restrictions.
+* If you plan to handle sensitive data with this tool on a publicly accessible server, consider hardening your system.
 * AFreminders comes from *AFRAZ* and *reminders*.
 
 ## License

@@ -31,6 +31,8 @@ $language['statusMessageStarted'] = 'gestartet';
 $language['statusMessageRestarted'] = 'neu gestartet';
 $language['statusMessageStopped'] = 'gestoppt';
 $language['statusMessageAttributeAdded'] = 'aktualisiert';
+$language['statusMessageTagAdded'] = 'Tag hinzugefügt';
+$language['statusMessageTagRemoved'] = 'Tag entfernt';
 /* VARS DASHBOARD END */
 
 /* VARS EDIT START */
